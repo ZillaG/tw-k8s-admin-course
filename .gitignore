@@ -1,0 +1,15 @@
+*.swp
+.metadata
+.project
+.terraform
+.terraform.*
+*.tfstate
+*.tfstate.backup
+*.dot
+*.svg
+*.swp
+*.output
+*.out
+*.o
+*.zip
+.idea/
