@@ -30,34 +30,6 @@ resource "aws_instance" "ec2" {
   }
 }
 
-#################################################################
-# The setup-jenkins.sh script is now in the AMI, and needs to be
-# executed manually inside the EC2 since chaning ownership of the
-# $JENKINS_HOME files takes a looonnnnnng time. 
-/*
-resource "null_resource" "ec" {
-  depends_on = [aws_volume_attachment.dev_xvdf]
-  connection {
-    type        = "ssh"
-    user        = "ec2-user"
-    private_key = file("~/.ssh/aws-useast-sbox.pem")
-    host        = aws_instance.jenkins_master.private_ip
-  }
-
-  provisioner "file" {
-    source      = "../module_ec2/setup-jenkins.sh"
-    destination = "/tmp/setup-jenkins.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo chmod +x /tmp/setup-jenkins.sh; sudo /tmp/setup-jenkins.sh"
-    ]
-  }
-}
-*/
-#################################################################
-
 output "ec2_id" {
   value = aws_instance.ec2.id
   description = "Instance id of EC2"

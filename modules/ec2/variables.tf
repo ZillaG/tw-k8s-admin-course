@@ -35,20 +35,3 @@ variable "termination_protection" {
 variable "vpc_security_group_ids" {
   type = list
 }
-
-// These are common to all calling modules and can be overriden using
-// the -var "key=value" option
-variable "iam_instance_profile" {
-  type    = string
-  default = "INFRASTRUCTURE-SYSTEMS"
-}
-
-variable "jenkins_home" {
-  type    = string
-  default = "/mnt/jenkins_master/jenkins_home"
-}
-
-variable "skip_att_ebs_destroy" {
-  type    = bool
-  default = false
-}
