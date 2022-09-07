@@ -1,7 +1,14 @@
 #!/bin/bash
 #############################################################################
 # Initialize kubeadm
-sudo kubeadm init
+sudo kubeadm init &
+BACK_PID=$!
+
+while kill -0 $BACK_PID ; do
+    echo "kubeadm init still running..."
+    sleep 5
+    # You can add a timeout here if you want
+done
 
 # Copy the admin.conf file to Ubuntu user
 UBUNTU_KUBE_HOME=/home/ubuntu/.kube

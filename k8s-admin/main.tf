@@ -118,6 +118,7 @@ module "k8s_ec2_worker_1" {
 
 // Install containerd in all the nodes
 module "k8s_containerd" {
+  depends_on             = [module.k8s_ec2_master_0, module.k8s_ec2_worker_0, module.k8s_ec2_worker_1]
   for_each               = tomap({a=module.k8s_ec2_master_0.ec2_pub_ip, b=module.k8s_ec2_worker_0.ec2_pub_ip, c=module.k8s_ec2_worker_1.ec2_pub_ip})
   source                 = "../modules/k8s_installer"
   ssh_key_file           = var.ssh_key_file
@@ -142,6 +143,43 @@ module "k8s_init_kubeadm" {
   ssh_key_file           = var.ssh_key_file
   ec2_pub_ip             = module.k8s_ec2_master_0.ec2_pub_ip
   shell_script           = "init-kubeadm.sh"
+  kubeadm_init           = true
+  worker_node_script     = false
+}
+
+// Create command to join cluster on the master node
+module "k8s_create_token" {
+  depends_on             = [module.k8s_init_kubeadm]
+  source                 = "../modules/k8s_installer"
+  ssh_key_file           = var.ssh_key_file
+  ec2_pub_ip             = module.k8s_ec2_master_0.ec2_pub_ip
+  shell_script           = "join-cluster.sh"
+  worker_node_script     = false
+  create_token           = true
+}
+
+// Run command to join cluster on the worker nodes
+module "k8s_join_cluster" {
+  depends_on             = [module.k8s_create_token]
+  for_each               = tomap({a=module.k8s_ec2_worker_0.ec2_pub_ip, b=module.k8s_ec2_worker_1.ec2_pub_ip})
+  source                 = "../modules/k8s_installer"
+  ssh_key_file           = var.ssh_key_file
+  ec2_pub_ip             = each.value
+  shell_script           = "join-cluster.sh"
+  master_node_script     = false
+  join_cluster           = true
+  copy_script_to_remote  = false # script is on remote
+}
+
+// Install Weavenet CNI on master. This is when the nodes will
+// finally show as Ready since networking will be established
+// between them.
+module "k8s_install_weavenet" {
+  depends_on             = [module.k8s_kube_star]
+  source                 = "../modules/k8s_installer"
+  ssh_key_file           = var.ssh_key_file
+  ec2_pub_ip             = module.k8s_ec2_master_0.ec2_pub_ip
+  shell_script           = "install-weavenet.sh"
 }
 
 // VPC

@@ -13,7 +13,7 @@ variable "vpc_name" {
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR"
-  default     = "172.16.0.0/16"
+  default     = "10.100.0.0/16"
 }
 
 variable "sg_rules_master" {
@@ -30,28 +30,28 @@ variable "sg_rules_master" {
       from_port   = "2379"
       to_port     = "2380"
       protocol    = "tcp"
-      cidr_blocks = ["172.16.0.0/16"]
+      cidr_blocks = ["10.100.0.0/16"]
       description = "k8s ectd server client API"
     }
     k8s_kubelet_api = {
       from_port   = "10250"
       to_port     = "10250"
       protocol    = "tcp"
-      cidr_blocks = ["172.16.0.0/16"]
+      cidr_blocks = ["10.100.0.0/16"]
       description = "k8s kubelet API"
     }
     k8s_kube_scheduler = {
       from_port   = "10251"
       to_port     = "10251"
       protocol    = "tcp"
-      cidr_blocks = ["172.16.0.0/16"]
+      cidr_blocks = ["10.100.0.0/16"]
       description = "k8s kube-scheduler"
     }
     k8s_controler_manager = {
       from_port   = "10252"
       to_port     = "10252"
       protocol    = "tcp"
-      cidr_blocks = ["172.16.0.0/16"]
+      cidr_blocks = ["10.100.0.0/16"]
       description = "k8s controller manager"
     }
     k8s_node_port_services = {
@@ -59,6 +59,20 @@ variable "sg_rules_master" {
       to_port     = "32767"
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
+      description = "Node port services"
+    }
+    k8s_weavenet_services_tcp = {
+      from_port   = "6781"
+      to_port     = "6783"
+      protocol    = "tcp"
+      cidr_blocks = ["10.100.0.0/16"]
+      description = "Node port services"
+    }
+    k8s_weavenet_services_udp = {
+      from_port   = "6783"
+      to_port     = "6784"
+      protocol    = "udp"
+      cidr_blocks = ["10.100.0.0/16"]
       description = "Node port services"
     }
   }
@@ -71,7 +85,7 @@ variable "sg_rules_worker" {
       from_port   = "10250"
       to_port     = "10250"
       protocol    = "tcp"
-      cidr_blocks = ["172.16.0.0/16"]
+      cidr_blocks = ["10.100.0.0/16"]
       description = "k8s kubelet API"
     }
     k8s_node_port_services = {
@@ -79,6 +93,20 @@ variable "sg_rules_worker" {
       to_port     = "32767"
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
+      description = "Node port services"
+    }
+    k8s_weavenet_services_tcp = {
+      from_port   = "6781"
+      to_port     = "6783"
+      protocol    = "tcp"
+      cidr_blocks = ["10.100.0.0/16"]
+      description = "Node port services"
+    }
+    k8s_weavenet_services_udp = {
+      from_port   = "6783"
+      to_port     = "6784"
+      protocol    = "udp"
+      cidr_blocks = ["10.100.0.0/16"]
       description = "Node port services"
     }
   }
@@ -99,7 +127,7 @@ variable "az_us_east_1a" {
 variable "cidr_us_east_1a" {
   type        = string
   description = "AZ CIDR"
-  default     = "172.16.10.0/24"
+  default     = "10.100.10.0/24"
 }
 
 
@@ -148,7 +176,7 @@ variable "ssh_key_name" {
 
 variable "ssh_key_file" {
   type = string
-  description = "SSH key file"
+  description = "Absolute path of SSH key file"
 }
 
 variable "home_ip" {
